@@ -646,8 +646,8 @@ textarea.input {
 }
 
 .chat-message.user {
-  justify-content: flex-end;
   flex-direction: row-reverse;
+  justify-content: flex-start;
 }
 
 .chat-message.assistant {
