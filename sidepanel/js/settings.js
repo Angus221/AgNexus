@@ -67,6 +67,14 @@ const Settings = {
     const model = document.getElementById('settings-model').value.trim();
     const floatBallEnabled = document.getElementById('settings-float-ball').checked;
 
+    // 检查是否是首次设置API key
+    const oldSettings = await Storage.getSettings();
+    const isFirstTimeSetup = !oldSettings.apiKey && apiKey;
+
+    // 检查是否没有聊天记录
+    const chatHistory = await Storage.getChatHistory();
+    const hasNoChatHistory = chatHistory.length === 0;
+
     await Storage.updateSettings({
       apiUrl: apiUrl || 'https://dashscope.aliyuncs.com/compatible-mode/v1',
       apiKey,
@@ -83,6 +91,29 @@ const Settings = {
     }
 
     Toast.show('设置已保存', 'success');
+
+    // 如果是首次设置且没有聊天记录，主动问候
+    if (isFirstTimeSetup && hasNoChatHistory && window.Assistant) {
+      // 切换到助手面板
+      setTimeout(() => {
+        Tabs.switchTab('assistant');
+
+        // 延迟一下确保面板切换完成
+        setTimeout(() => {
+          // 清空之前的欢迎消息（如果有）
+          const chatContainer = document.getElementById('chat-messages');
+          if (chatContainer) {
+            chatContainer.innerHTML = '';
+          }
+
+          // 发送主动问候消息
+          Assistant.addMessage('assistant', '你好呀！我是AG Nexus 助理，你可以叫我小G。✨\n\n那我要怎么称呼你呀~，你是小哥哥还是小姐姐呀，好想认识一下你呀~\n\n不想告诉我说"跳过"也行~');
+
+          // 标记已询问过，避免重复
+          Storage.setHasAskedUserInfo(true);
+        }, 100);
+      }, 500);
+    }
   },
 
   showModal() {

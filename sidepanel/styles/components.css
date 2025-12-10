@@ -647,6 +647,7 @@ textarea.input {
 
 .chat-message.user {
   justify-content: flex-end;
+  flex-direction: row-reverse;
 }
 
 .chat-message.assistant {
@@ -676,6 +677,16 @@ textarea.input {
   width: 20px;
   height: 20px;
   color: var(--text-secondary);
+}
+
+/* 用户头像样式 */
+.chat-message.user .chat-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  border: none;
+}
+
+.chat-message.user .chat-avatar svg {
+  color: white;
 }
 
 .chat-bubble {

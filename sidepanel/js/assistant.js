@@ -210,6 +210,11 @@ ${todosText}${urgentAlert}
     this.sendBtn?.addEventListener('click', () => {
       this.sendMessage();
     });
+
+    // 清除聊天记录按钮
+    document.getElementById('chat-clear')?.addEventListener('click', () => {
+      this.clearHistory();
+    });
   },
 
   async loadHistory() {
@@ -544,11 +549,10 @@ ${todosText}${urgentAlert}
     if (role === 'assistant') {
       avatarEl.innerHTML = '<img src="../icons/icon.jpg" alt="Assistant">';
     } else {
-      // 用户头像：小人图标
+      // 用户头像：实心小人图标
       avatarEl.innerHTML = `
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
-          <circle cx="12" cy="7" r="4"/>
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
         </svg>
       `;
     }
@@ -612,6 +616,24 @@ ${todosText}${urgentAlert}
 
   scrollToBottom() {
     this.container.scrollTop = this.container.scrollHeight;
+  },
+
+  // 清除聊天记录
+  async clearHistory() {
+    if (!confirm('确定要清除所有聊天记录吗？此操作不可恢复。')) {
+      return;
+    }
+
+    // 清空存储
+    await Storage.set('chatHistory', []);
+
+    // 清空界面
+    this.container.innerHTML = '';
+
+    // 重新加载（会显示欢迎消息）
+    this.loadHistory();
+
+    Toast.show('聊天记录已清除');
   },
 
   // 处理首次对话时的用户信息收集
