@@ -1,0 +1,156 @@
+/* AG Nexus - CSS 变量与主题系统 */
+/* 现代 Fluent Design 风格 - 优化版 */
+
+:root {
+  /* ========== 品牌色 ========== */
+  --brand-primary: #2563EB;           /* 现代亮蓝 */
+  --brand-primary-hover: #1D4ED8;
+  --brand-primary-light: #EFF6FF;     /* 选中态背景 */
+  --brand-primary-border: #BFDBFE;    /* 悬停边框 */
+  --brand-secondary: #3B82F6;
+
+  /* ========== 背景色 ========== */
+  --bg-page: #F8F9FA;                 /* 全局背景：极浅灰 */
+  --bg-surface: #FFFFFF;              /* 卡片/内容块背景 */
+  --bg-elevated: #FFFFFF;             /* 弹出层背景 */
+  --bg-hover: #F3F4F6;                /* 悬停背景 */
+  --bg-active: #E5E7EB;               /* 按下背景 */
+  --bg-tab-active: #EFF6FF;           /* Tab选中背景 */
+
+  /* ========== 文字颜色 ========== */
+  --text-strong: #111827;             /* 一级标题 - 接近黑 */
+  --text-primary: #1F2937;            /* 主要文字 */
+  --text-secondary: #4B5563;          /* 二级文本 - 深灰 */
+  --text-tertiary: #6B7280;           /* 三级文本 */
+  --text-muted: #9CA3AF;              /* 辅助文本 - 浅灰 */
+  --text-placeholder: #9CA3AF;        /* 占位符 */
+  --text-inverse: #FFFFFF;            /* 反色文字 */
+
+  /* ========== 边框色 ========== */
+  --border-light: #F3F4F6;            /* 极淡边框 */
+  --border-default: #E5E7EB;          /* 默认边框 - 分割线 */
+  --border-medium: #D1D5DB;           /* 中等边框 */
+  --border-focus: var(--brand-primary);
+
+  /* ========== 状态色 ========== */
+  --success: #10B981;
+  --success-light: #D1FAE5;
+  --warning: #F59E0B;
+  --warning-light: #FEF3C7;
+  --error: #EF4444;
+  --error-light: #FEE2E2;
+  --info: #3B82F6;
+  --info-light: #DBEAFE;
+
+  /* ========== 阴影 ========== */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+
+  /* ========== 圆角 ========== */
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-full: 9999px;
+
+  /* ========== 间距 ========== */
+  --spacing-1: 4px;
+  --spacing-2: 8px;
+  --spacing-3: 12px;
+  --spacing-4: 16px;
+  --spacing-5: 20px;
+  --spacing-6: 24px;
+  --spacing-8: 32px;
+
+  /* ========== 字体 ========== */
+  --font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Microsoft YaHei UI', Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-mono: 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+
+  --font-size-xs: 11px;
+  --font-size-sm: 12px;
+  --font-size-md: 14px;
+  --font-size-lg: 16px;
+  --font-size-xl: 18px;
+
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  --line-height-tight: 1.25;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.625;
+
+  /* ========== 动画 ========== */
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-slow: 300ms ease;
+
+  /* ========== 布局 ========== */
+  --header-height: 52px;
+  --sidebar-width: 360px;
+}
+
+/* ========== 深色模式 ========== */
+[data-theme="dark"] {
+  --brand-primary-light: rgba(37, 99, 235, 0.15);
+  --brand-primary-border: rgba(59, 130, 246, 0.3);
+
+  --bg-page: #111827;
+  --bg-surface: #1F2937;
+  --bg-elevated: #374151;
+  --bg-hover: #374151;
+  --bg-active: #4B5563;
+  --bg-tab-active: rgba(37, 99, 235, 0.2);
+
+  --text-strong: #F9FAFB;
+  --text-primary: #F3F4F6;
+  --text-secondary: #D1D5DB;
+  --text-tertiary: #9CA3AF;
+  --text-muted: #6B7280;
+  --text-placeholder: #6B7280;
+
+  --border-light: #374151;
+  --border-default: #4B5563;
+  --border-medium: #6B7280;
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* 系统主题自动跟随 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand-primary-light: rgba(37, 99, 235, 0.15);
+    --brand-primary-border: rgba(59, 130, 246, 0.3);
+
+    --bg-page: #111827;
+    --bg-surface: #1F2937;
+    --bg-elevated: #374151;
+    --bg-hover: #374151;
+    --bg-active: #4B5563;
+    --bg-tab-active: rgba(37, 99, 235, 0.2);
+
+    --text-strong: #F9FAFB;
+    --text-primary: #F3F4F6;
+    --text-secondary: #D1D5DB;
+    --text-tertiary: #9CA3AF;
+    --text-muted: #6B7280;
+    --text-placeholder: #6B7280;
+
+    --border-light: #374151;
+    --border-default: #4B5563;
+    --border-medium: #6B7280;
+
+    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
+  }
+}
