@@ -223,14 +223,22 @@ textarea.input {
 }
 
 .input-group .input {
+  padding-left: 44px;
   padding-right: 44px;
 }
 
 .input-group .input-action {
   position: absolute;
-  right: var(--spacing-2);
   top: 50%;
   transform: translateY(-50%);
+}
+
+.input-group .input-action-left {
+  left: var(--spacing-2);
+}
+
+.input-group .input-action-right {
+  right: var(--spacing-2);
 }
 
 /* 聊天输入框 */
