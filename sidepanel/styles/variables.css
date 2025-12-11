@@ -3,33 +3,34 @@
 
 :root {
   /* ========== 品牌色 ========== */
-  --brand-primary: #2563EB;           /* 现代亮蓝 */
-  --brand-primary-hover: #1D4ED8;
-  --brand-primary-light: #EFF6FF;     /* 选中态背景 */
-  --brand-primary-border: #BFDBFE;    /* 悬停边框 */
-  --brand-secondary: #3B82F6;
+  --brand-primary: #6366F1;           /* Indigo 500 - 现代靛青色 */
+  --brand-primary-hover: #4F46E5;     /* Indigo 600 */
+  --brand-primary-light: #EEF2FF;     /* Indigo 50 - 选中态背景 */
+  --brand-primary-border: #C7D2FE;    /* Indigo 200 - 悬停边框 */
+  --brand-secondary: #818CF8;         /* Indigo 400 */
 
   /* ========== 背景色 ========== */
-  --bg-page: #F8F9FA;                 /* 全局背景：极浅灰 */
+  --bg-page: #F9FAFB;                 /* 全局背景：极浅灰 Gray 50 */
   --bg-surface: #FFFFFF;              /* 卡片/内容块背景 */
   --bg-elevated: #FFFFFF;             /* 弹出层背景 */
-  --bg-hover: #F3F4F6;                /* 悬停背景 */
-  --bg-active: #E5E7EB;               /* 按下背景 */
-  --bg-tab-active: #EFF6FF;           /* Tab选中背景 */
+  --bg-hover: #F3F4F6;                /* 悬停背景 Gray 100 */
+  --bg-active: #E5E7EB;               /* 按下背景 Gray 200 */
+  --bg-tab-active: #EEF2FF;           /* Tab选中背景 Indigo 50 */
+  --bg-tab-inactive: #F1F5F9;         /* Tab未选中背景 Slate 100 */
 
   /* ========== 文字颜色 ========== */
-  --text-strong: #111827;             /* 一级标题 - 接近黑 */
-  --text-primary: #1F2937;            /* 主要文字 */
-  --text-secondary: #4B5563;          /* 二级文本 - 深灰 */
-  --text-tertiary: #6B7280;           /* 三级文本 */
-  --text-muted: #9CA3AF;              /* 辅助文本 - 浅灰 */
-  --text-placeholder: #9CA3AF;        /* 占位符 */
+  --text-strong: #0F172A;             /* 一级标题 Slate 900 */
+  --text-primary: #1E293B;            /* 主要文字 Slate 800 */
+  --text-secondary: #475569;          /* 二级文本 Slate 600 */
+  --text-tertiary: #64748B;           /* 三级文本 Slate 500 */
+  --text-muted: #94A3B8;              /* 辅助文本 Slate 400 */
+  --text-placeholder: #CBD5E1;        /* 占位符 Slate 300 */
   --text-inverse: #FFFFFF;            /* 反色文字 */
 
   /* ========== 边框色 ========== */
-  --border-light: #F3F4F6;            /* 极淡边框 */
-  --border-default: #E5E7EB;          /* 默认边框 - 分割线 */
-  --border-medium: #D1D5DB;           /* 中等边框 */
+  --border-light: #F1F5F9;            /* 极淡边框 Slate 100 */
+  --border-default: #E2E8F0;          /* 默认边框 Slate 200 */
+  --border-medium: #CBD5E1;           /* 中等边框 Slate 300 */
   --border-focus: var(--brand-primary);
 
   /* ========== 状态色 ========== */
@@ -43,11 +44,11 @@
   --info-light: #DBEAFE;
 
   /* ========== 阴影 ========== */
-  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
-  --shadow-hover: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.08), 0 1px 2px -1px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.04);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+  --shadow-hover: 0 4px 12px -2px rgba(0, 0, 0, 0.12), 0 2px 6px -2px rgba(0, 0, 0, 0.05);
 
   /* ========== 圆角 ========== */
   --radius-sm: 6px;

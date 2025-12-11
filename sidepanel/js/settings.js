@@ -71,9 +71,8 @@ const Settings = {
     const oldSettings = await Storage.getSettings();
     const isFirstTimeSetup = !oldSettings.apiKey && apiKey;
 
-    // 检查是否没有聊天记录
-    const chatHistory = await Storage.getChatHistory();
-    const hasNoChatHistory = chatHistory.length === 0;
+    // 检查是否已经询问过用户信息
+    const hasAskedUserInfo = await Storage.getHasAskedUserInfo();
 
     await Storage.updateSettings({
       apiUrl: apiUrl || 'https://dashscope.aliyuncs.com/compatible-mode/v1',
@@ -92,8 +91,8 @@ const Settings = {
 
     Toast.show('设置已保存', 'success');
 
-    // 如果是首次设置且没有聊天记录，主动问候
-    if (isFirstTimeSetup && hasNoChatHistory && window.Assistant) {
+    // 如果是首次设置且还没询问过用户信息，主动问候
+    if (isFirstTimeSetup && !hasAskedUserInfo && window.Assistant) {
       // 切换到助手面板
       setTimeout(() => {
         Tabs.switchTab('assistant');
@@ -106,11 +105,10 @@ const Settings = {
             chatContainer.innerHTML = '';
           }
 
-          // 发送主动问候消息
-          Assistant.addMessage('assistant', '你好呀！我是AG Nexus 助理，你可以叫我小G。✨\n\n那我要怎么称呼你呀~，你是小哥哥还是小姐姐呀，好想认识一下你呀~\n\n不想告诉我说"跳过"也行~');
+          // 发送主动问候消息（不保存到历史，让 handleFirstTimeSetup 流程处理后续）
+          Assistant.addMessage('assistant', '你好呀！我是AG Nexus 助理，你可以叫我小G。✨\n\n那我要怎么称呼你呀~，你是小哥哥还是小姐姐呀，好想认识一下你呀~\n\n不想告诉我说"跳过"也行~', [], false);
 
-          // 标记已询问过，避免重复
-          Storage.setHasAskedUserInfo(true);
+          // 注意：不设置 hasAskedUserInfo，让 handleFirstTimeSetup 流程处理用户回复后再设置
         }, 100);
       }, 500);
     }

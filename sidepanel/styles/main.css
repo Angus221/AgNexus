@@ -88,70 +88,61 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: var(--spacing-1);
-  padding: var(--spacing-2) var(--spacing-3);
-  border-radius: var(--radius-md);
+  gap: var(--spacing-2);
+  padding: 0;
   cursor: pointer;
-  transition: all var(--transition-normal);
-  background: var(--tab-inactive-bg);
-  color: var(--brand-primary);
-  min-width: 52px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  background: transparent;
+  min-width: 56px;
+  position: relative;
 }
 
-/* 未选中状态 - 浅蓝色背景 */
-.tab-item {
-  background: #E8F4FD;
-  color: #3B82F6;
-}
-
-.tab-item:hover {
-  background: #DBEAFE;
-}
-
-/* 选中状态 - 深蓝色 */
-.tab-item.active {
-  background: #2563EB;
-  color: white;
-}
-
-/* 设置按钮 - 灰色背景 */
-.tab-item.tab-settings {
-  background: #F3F4F6;
-  color: #6B7280;
-  min-width: 44px;
-  padding: var(--spacing-2);
-}
-
-.tab-item.tab-settings .tab-icon {
-  margin-bottom: 0;
-}
-
-.tab-item.tab-settings:hover {
-  background: #E5E7EB;
-}
-
-.tab-item.tab-settings.active {
-  background: #6B7280;
-  color: white;
-}
-
-.tab-icon {
+/* 图标容器 - 圆角矩形 */
+.tab-item .tab-icon {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 2px;
+  background: var(--bg-tab-inactive);
+  border-radius: var(--radius-lg);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  color: var(--text-tertiary);
+}
+
+/* 文字标签 */
+.tab-item .tab-label {
+  font-size: var(--font-size-xs);
+  color: var(--text-secondary);
+  transition: color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 悬停状态 */
+.tab-item:hover .tab-icon {
+  background: var(--bg-hover);
+}
+
+/* 选中状态 - 靛青色矩形 */
+.tab-item.active .tab-icon {
+  background: var(--brand-primary);
+  color: white;
+  box-shadow: 0 2px 8px -2px rgba(99, 102, 241, 0.4);
+}
+
+.tab-item.active .tab-label {
+  color: var(--brand-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* 设置按钮 - 和其他导航项一样的样式 */
+.tab-item.tab-settings {
+  min-width: 56px;
 }
 
 .tab-icon svg {
   width: 20px;
   height: 20px;
   stroke-width: 1.75;
-}
-
-.tab-label {
-  font-size: 11px;
-  font-weight: var(--font-weight-medium);
-  white-space: nowrap;
 }
 
 /* ========== 内容区域 ========== */

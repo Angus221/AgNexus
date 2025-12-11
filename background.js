@@ -64,24 +64,84 @@ async function initFloatBall() {
   console.log('初始化悬浮球，启用状态:', floatBallEnabled);
 
   if (floatBallEnabled) {
-    // 向所有标签页发送显示悬浮球的消息
-    chrome.tabs.query({}, (tabs) => {
-      tabs.forEach(tab => {
-        if (tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
-          chrome.tabs.sendMessage(tab.id, {
-            type: 'TOGGLE_FLOAT_BALL',
-            enabled: true
-          }).catch((err) => {
-            console.log('初始化悬浮球失败:', tab.id, err.message);
+    // 获取所有标签页，主动注入内容脚本
+    const tabs = await chrome.tabs.query({});
+
+    for (const tab of tabs) {
+      // 跳过特殊页面
+      if (!tab.url ||
+          tab.url.startsWith('chrome://') ||
+          tab.url.startsWith('chrome-extension://') ||
+          tab.url.startsWith('edge://') ||
+          tab.url.startsWith('extension://') ||
+          tab.url.startsWith('about:')) {
+        continue;
+      }
+
+      try {
+        // 先尝试发送消息（如果内容脚本已存在）
+        await chrome.tabs.sendMessage(tab.id, {
+          type: 'TOGGLE_FLOAT_BALL',
+          enabled: true
+        });
+        console.log('成功发送消息到标签页:', tab.id);
+      } catch (err) {
+        // 内容脚本不存在，主动注入
+        console.log('标签页无内容脚本，正在注入:', tab.id, tab.url);
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['content/floatball.js']
           });
+          console.log('成功注入内容脚本:', tab.id);
+        } catch (injectErr) {
+          console.log('注入脚本失败:', tab.id, injectErr.message);
         }
-      });
-    });
+      }
+    }
   }
 }
 
-// 跟踪每个标签页的侧边栏状态
-const sidePanelStates = new Map();
+// 更新所有标签页的悬浮球状态
+async function updateFloatBallOnAllTabs(enabled) {
+  console.log('更新所有标签页悬浮球状态:', enabled);
+  const tabs = await chrome.tabs.query({});
+
+  for (const tab of tabs) {
+    // 跳过特殊页面
+    if (!tab.url ||
+        tab.url.startsWith('chrome://') ||
+        tab.url.startsWith('chrome-extension://') ||
+        tab.url.startsWith('edge://') ||
+        tab.url.startsWith('extension://') ||
+        tab.url.startsWith('about:')) {
+      continue;
+    }
+
+    try {
+      // 先尝试发送消息
+      await chrome.tabs.sendMessage(tab.id, {
+        type: 'TOGGLE_FLOAT_BALL',
+        enabled: enabled
+      });
+      console.log('成功发送消息到标签页:', tab.id);
+    } catch (err) {
+      // 如果要启用悬浮球但内容脚本不存在，主动注入
+      if (enabled) {
+        console.log('标签页无内容脚本，正在注入:', tab.id);
+        try {
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['content/floatball.js']
+          });
+          console.log('成功注入内容脚本:', tab.id);
+        } catch (injectErr) {
+          console.log('注入脚本失败:', tab.id, injectErr.message);
+        }
+      }
+    }
+  }
+}
 
 // 监听来自sidepanel和content script的消息
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
@@ -89,56 +149,43 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 
   if (message.type === 'UPDATE_FLOAT_BALL') {
     // 更新所有标签页的悬浮球状态
-    chrome.tabs.query({}, (tabs) => {
-      console.log('准备更新', tabs.length, '个标签页');
-      tabs.forEach(tab => {
-        // 跳过chrome://和扩展页面
-        if (tab.url && !tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
-          chrome.tabs.sendMessage(tab.id, {
-            type: 'TOGGLE_FLOAT_BALL',
-            enabled: message.enabled
-          }).then(() => {
-            console.log('成功发送消息到标签页:', tab.id, tab.url);
-          }).catch((err) => {
-            console.log('发送消息失败:', tab.id, tab.url, err.message);
-          });
-        }
-      });
-    });
+    updateFloatBallOnAllTabs(message.enabled);
+    sendResponse({ success: true });
   } else if (message.type === 'OPEN_SIDE_PANEL') {
-    // 打开侧边栏
-    if (sender.tab) {
-      chrome.sidePanel.open({ tabId: sender.tab.id });
-      sidePanelStates.set(sender.tab.id, true);
-    }
-  } else if (message.type === 'TOGGLE_SIDE_PANEL') {
-    // 切换侧边栏
+    // 打开侧边栏（带错误处理）
     if (sender.tab) {
       const tabId = sender.tab.id;
-      const isOpen = sidePanelStates.get(tabId);
-
-      if (isOpen) {
-        // 侧边栏已打开，关闭它
-        // Chrome API 没有直接关闭方法，使用 setOptions 禁用然后重新启用
-        chrome.sidePanel.setOptions({
-          tabId: tabId,
-          enabled: false
-        }, () => {
-          // 短暂延迟后重新启用，以便下次可以打开
-          setTimeout(() => {
-            chrome.sidePanel.setOptions({
-              tabId: tabId,
-              enabled: true
-            });
-          }, 100);
+      chrome.sidePanel.open({ tabId: tabId })
+        .then(() => {
+          console.log('侧边栏已打开，标签页:', tabId);
+          sendResponse({ success: true });
+        })
+        .catch((error) => {
+          console.error('打开侧边栏失败:', error);
+          sendResponse({ success: false, error: error.message });
         });
-        sidePanelStates.set(tabId, false);
-      } else {
-        // 侧边栏已关闭，打开它
-        chrome.sidePanel.open({ tabId: tabId });
-        sidePanelStates.set(tabId, true);
-      }
+    } else {
+      console.error('没有发送者标签页信息');
+      sendResponse({ success: false, error: 'No sender tab' });
     }
+    return true; // 保持消息通道开启以异步响应
+  } else if (message.type === 'TOGGLE_SIDE_PANEL') {
+    // 保留 TOGGLE 支持，但简化为直接打开（因为 Chrome API 不支持可靠的关闭）
+    if (sender.tab) {
+      const tabId = sender.tab.id;
+      chrome.sidePanel.open({ tabId: tabId })
+        .then(() => {
+          console.log('侧边栏已打开（通过 TOGGLE），标签页:', tabId);
+          sendResponse({ success: true });
+        })
+        .catch((error) => {
+          console.error('打开侧边栏失败（通过 TOGGLE）:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+    } else {
+      sendResponse({ success: false, error: 'No sender tab' });
+    }
+    return true; // 保持消息通道开启以异步响应
   } else if (message.type === 'GET_CURRENT_TAB') {
     // 获取当前活动标签页信息
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -159,9 +206,4 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 
   return true; // 保持消息通道开启
-});
-
-// 标签页关闭时清理状态
-chrome.tabs.onRemoved.addListener((tabId) => {
-  sidePanelStates.delete(tabId);
 });

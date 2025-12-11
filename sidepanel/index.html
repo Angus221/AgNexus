@@ -60,6 +60,7 @@
                 <circle cx="12" cy="12" r="1"/><circle cx="12" cy="5" r="1"/><circle cx="12" cy="19" r="1"/>
               </svg>
             </span>
+            <span class="tab-label">更多</span>
           </div>
           <!-- 下拉菜单 -->
           <div class="dropdown-menu" id="more-menu">
@@ -269,6 +270,33 @@
         </div>
 
         <div class="settings-section">
+          <h4 class="settings-subtitle">外观</h4>
+          <div class="form-group">
+            <label class="form-label">主题模式</label>
+            <div style="display: flex; gap: 12px;">
+              <label class="theme-radio-option">
+                <input type="radio" name="theme-mode" value="light" id="theme-light" checked>
+                <span class="theme-radio-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/>
+                  </svg>
+                  <span>亮色</span>
+                </span>
+              </label>
+              <label class="theme-radio-option">
+                <input type="radio" name="theme-mode" value="dark" id="theme-dark">
+                <span class="theme-radio-label">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>
+                  </svg>
+                  <span>暗色</span>
+                </span>
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="settings-section">
           <h4 class="settings-subtitle">AI 模型配置</h4>
           <div class="form-group">
             <label class="form-label">API 地址</label>
@@ -325,9 +353,7 @@
       <div class="input-group">
         <button class="btn btn-icon btn-ghost input-action input-action-left" id="chat-clear" title="清除聊天记录" style="width:36px; height:36px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"/>
-            <line x1="18" y1="9" x2="12" y2="15"/>
-            <line x1="12" y1="9" x2="18" y2="15"/>
+            <path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/>
           </svg>
         </button>
         <input type="text" class="input input-chat" id="chat-input" placeholder="输入你的想法，或让我帮你配置...">
@@ -597,6 +623,7 @@
 
   <!-- JS 模块 -->
   <script src="js/storage.js"></script>
+  <script src="js/theme.js"></script>
   <script src="js/tabs.js"></script>
   <script src="js/navigation.js"></script>
   <script src="js/bookmark.js"></script>

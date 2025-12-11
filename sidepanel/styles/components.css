@@ -1,5 +1,44 @@
 /* AG Nexus - 组件样式 */
 
+/* ========== 主题选择器 ========== */
+.theme-radio-option {
+  cursor: pointer;
+}
+
+.theme-radio-option input {
+  display: none;
+}
+
+.theme-radio-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  border: 2px solid var(--border-default);
+  background: var(--bg-surface);
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+  min-width: 100px;
+  justify-content: center;
+}
+
+.theme-radio-option input:checked + .theme-radio-label {
+  border-color: var(--brand-primary);
+  background: var(--brand-primary-light);
+  color: var(--brand-primary);
+}
+
+.theme-radio-option:hover .theme-radio-label {
+  border-color: var(--brand-primary-border);
+}
+
+.theme-radio-label svg {
+  flex-shrink: 0;
+}
+
 /* ========== 待办统计 ========== */
 .todo-stats {
   display: grid;
@@ -135,9 +174,9 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   border: none;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   white-space: nowrap;
 }
 
@@ -149,19 +188,24 @@
 .btn-primary {
   background: var(--brand-primary);
   color: var(--text-inverse);
+  box-shadow: 0 1px 2px 0 rgba(99, 102, 241, 0.2);
 }
 
 .btn-primary:hover {
   background: var(--brand-primary-hover);
+  box-shadow: 0 2px 4px 0 rgba(99, 102, 241, 0.3);
+  transform: translateY(-1px);
 }
 
 .btn-secondary {
-  background: var(--bg-hover);
+  background: var(--bg-surface);
   color: var(--text-primary);
+  border: 1px solid var(--border-default);
 }
 
 .btn-secondary:hover {
-  background: var(--bg-active);
+  background: var(--bg-hover);
+  border-color: var(--border-medium);
 }
 
 .btn-ghost {
@@ -195,18 +239,20 @@
   color: var(--text-primary);
   background: var(--bg-surface);
   border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   outline: none;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 }
 
 .input:hover {
   border-color: var(--border-medium);
+  box-shadow: inset 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
 .input:focus {
   border-color: var(--brand-primary);
-  box-shadow: 0 0 0 3px var(--brand-primary-light);
+  box-shadow: 0 0 0 3px var(--brand-primary-light), inset 0 1px 2px 0 rgba(0, 0, 0, 0.03);
 }
 
 .input::placeholder {
@@ -268,39 +314,41 @@ textarea.input {
   align-items: center;
   justify-content: center;
   padding: var(--spacing-3) var(--spacing-2);
-  background: var(--bg-surface);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-lg);
+  background: transparent;
+  border: none;
   cursor: pointer;
-  transition: all var(--transition-normal);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .nav-card:hover {
-  border-color: var(--brand-primary-border);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  transform: translateY(-1px);
 }
 
 .nav-card-icon {
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   margin-bottom: var(--spacing-2);
-  border-radius: var(--radius-md);
-  background: var(--bg-hover);
+  border-radius: var(--radius-lg);
+  background: var(--bg-tab-inactive);
   display: flex;
   align-items: center;
   justify-content: center;
   overflow: hidden;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.nav-card:hover .nav-card-icon {
+  background: var(--bg-hover);
 }
 
 .nav-card-icon img {
-  width: 24px;
-  height: 24px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
 }
 
 .nav-card-icon .fallback-icon {
-  font-size: 18px;
+  font-size: 20px;
   color: var(--text-muted);
 }
 
@@ -312,6 +360,7 @@ textarea.input {
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 100%;
+  font-weight: var(--font-weight-normal);
 }
 
 /* 导航列表视图 */
@@ -498,11 +547,13 @@ textarea.input {
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-2);
-  transition: all var(--transition-normal);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-xs);
 }
 
 .todo-item:hover {
   border-color: var(--brand-primary-border);
+  box-shadow: var(--shadow-sm);
 }
 
 .todo-item:hover .todo-delete {
@@ -583,10 +634,10 @@ textarea.input {
   max-height: 90vh;
   background: var(--bg-surface);
   border-radius: var(--radius-xl);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   overflow: hidden;
   transform: scale(0.95) translateY(10px);
-  transition: all var(--transition-normal);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-overlay.show .modal {
@@ -703,6 +754,8 @@ textarea.input {
   font-size: var(--font-size-md);
   line-height: var(--line-height-relaxed);
   word-wrap: break-word;
+  box-sizing: border-box;
+  overflow-wrap: break-word;
 }
 
 .chat-message.user .chat-bubble {
@@ -716,24 +769,137 @@ textarea.input {
   color: var(--text-primary);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-xl) var(--radius-xl) var(--radius-xl) var(--radius-sm);
+  width: auto;
+}
+
+/* 工具执行卡片容器 */
+.tool-results-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  margin-top: var(--spacing-3);
+  width: 100%;
+}
+
+/* 带工具卡片的气泡保持合适的最小宽度 */
+.chat-bubble:has(.tool-results-container) {
+  min-width: 280px;
 }
 
 /* 工具执行卡片 */
 .tool-card {
-  margin-top: var(--spacing-2);
-  padding: var(--spacing-2) var(--spacing-3);
-  background: var(--success-light);
-  border-left: 3px solid var(--success);
-  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-3);
+  background: linear-gradient(135deg, #F8FAFC 0%, #F1F5F9 100%);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  transition: all var(--transition-fast);
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.tool-card:hover {
+  border-color: var(--border-medium);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08), 0 2px 3px rgba(0, 0, 0, 0.06);
+  background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+}
+
+/* 暗色模式下的工具卡片 */
+[data-theme="dark"] .tool-card {
+  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+  border-color: #4B5563;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .tool-card:hover {
+  background: linear-gradient(135deg, #374151 0%, #4B5563 100%);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4), 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 左侧内容区 */
+.tool-card-left {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  flex: 1;
+  min-width: 0;
+}
+
+/* 工具图标 */
+.tool-card-icon {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--brand-primary-light);
+  border-radius: var(--radius-md);
+  color: var(--brand-primary);
+}
+
+.tool-card-icon svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* 工具内容 */
+.tool-card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.tool-card-title {
+  font-weight: var(--font-weight-medium);
+  color: var(--text-primary);
   font-size: var(--font-size-sm);
 }
 
-.tool-card-header {
+.tool-card-details {
+  color: var(--text-secondary);
+  font-size: var(--font-size-xs);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0;
+}
+
+.tool-detail-text {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 状态图标 */
+.tool-card-status {
+  flex-shrink: 0;
   display: flex;
   align-items: center;
-  gap: var(--spacing-2);
+  justify-content: center;
+  margin-left: var(--spacing-2);
+}
+
+.tool-card-status.success {
   color: var(--success);
-  font-weight: var(--font-weight-medium);
+}
+
+.tool-card-status.failed {
+  color: var(--error);
+}
+
+.tool-card-status svg {
+  width: 20px;
+  height: 20px;
 }
 
 /* ========== 指令项 - 单行显示 ========== */
@@ -747,11 +913,14 @@ textarea.input {
   border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-2);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-xs);
 }
 
 .cmd-item:hover {
   border-color: var(--brand-primary-border);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .cmd-item-icon {
@@ -799,17 +968,20 @@ textarea.input {
   display: flex;
   align-items: center;
   gap: var(--spacing-3);
-  padding: var(--spacing-2) var(--spacing-3);
+  padding: var(--spacing-3);
   background: var(--bg-surface);
   border: 1px solid var(--border-light);
   border-radius: var(--radius-lg);
   margin-bottom: var(--spacing-2);
   cursor: pointer;
-  transition: all var(--transition-fast);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-xs);
 }
 
 .bookmark-item:hover {
   border-color: var(--brand-primary-border);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
 }
 
 .bookmark-item-content {

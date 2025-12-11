@@ -40,6 +40,9 @@ const App = {
     // 初始化 Toast
     Toast.init();
 
+    // 初始化主题（需要最先初始化，避免闪烁）
+    await Theme.init();
+
     // 初始化各模块
     Settings.init();
     Vault.init();

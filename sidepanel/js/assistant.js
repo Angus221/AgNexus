@@ -98,6 +98,7 @@ ${todosText}${urgentAlert}
    - 主动提醒用户今天需要处理的紧急待办
    - 当用户添加待办时，协助分析优先级，给出合理建议
    - 如果发现用户待办过多或冲突，主动提出优化建议
+   - 如果用户闲聊，适当的时候用用户的昵称称呼对方，语气俏皮可爱~。
 
 2. **数据操作助手**
    - 当用户需要"添加、创建、记录"时，通过 JSON 指令操作数据
@@ -117,7 +118,7 @@ ${todosText}${urgentAlert}
 {"tool": "add_bookmark", "data": {"title": "名称", "url": "网址", "description": "描述"}}
 \`\`\`
    - 用于收藏具体的文章、页面
-   - title 可以留空 ""，系统会自动提取URL最后一级路径作为名称
+   - title 用户没说可以留空 ""，系统会自动提取URL最后一级路径作为名称
    - description 是可选的
    - 例如：用户说"收藏当前网页" → {"tool": "add_bookmark", "data": {"title": "", "url": "{{current_tab}}"}}
 
@@ -241,7 +242,7 @@ ${todosText}${urgentAlert}
       // 显示欢迎消息
       let greeting = '！';
       if (userProfile) {
-        const title = userProfile.gender === 'male' ? '先生' : userProfile.gender === 'female' ? '女士' : '';
+        const title = ' ';
         greeting = `${userProfile.name}${title}！`;
       }
       this.addMessage('assistant', `你好${greeting}我是AG Nexus 助理，你可以叫我小G，。\n\n我可以帮你：\n• 添加快捷导航\n• 管理指令和提示词\n• 创建待办事项\n\n例如："帮我把当前页面加到导航 或收藏"、"记个事，明天下午2点开会"、"收藏当前网页"`);
@@ -561,29 +562,116 @@ ${todosText}${urgentAlert}
     const bubbleEl = document.createElement('div');
     bubbleEl.className = 'chat-bubble';
     bubbleEl.innerHTML = this.formatContent(content);
-    messageEl.appendChild(bubbleEl);
 
-    // 渲染工具结果卡片
+    // 渲染工具结果卡片（放在气泡内部）
     if (toolResults.length > 0) {
       const toolsContainer = document.createElement('div');
-      toolsContainer.style.marginTop = '8px';
+      toolsContainer.className = 'tool-results-container';
 
       for (const result of toolResults) {
-        const cardEl = document.createElement('div');
-        cardEl.className = 'tool-card';
-        cardEl.innerHTML = `
-          <div class="tool-card-header">
-            <span>✅</span>
-            <span>${result.message}</span>
-          </div>
-        `;
+        const cardEl = this.createToolCard(result);
         toolsContainer.appendChild(cardEl);
       }
 
-      messageEl.appendChild(toolsContainer);
+      bubbleEl.appendChild(toolsContainer);
     }
 
+    messageEl.appendChild(bubbleEl);
     this.container.appendChild(messageEl);
+  },
+
+  createToolCard(result) {
+    const { type, success, data, message } = result;
+
+    // 获取工具信息
+    const toolInfo = this.getToolInfo(type);
+
+    // 创建卡片元素
+    const cardEl = document.createElement('div');
+    cardEl.className = 'tool-card';
+
+    // 格式化数据内容
+    const detailsHtml = this.formatToolDetails(type, data);
+
+    cardEl.innerHTML = `
+      <div class="tool-card-left">
+        <div class="tool-card-icon">
+          ${toolInfo.icon}
+        </div>
+        <div class="tool-card-content">
+          <div class="tool-card-title">${toolInfo.name}</div>
+          <div class="tool-card-details">${detailsHtml}</div>
+        </div>
+      </div>
+      <div class="tool-card-status ${success ? 'success' : 'failed'}">
+        ${success ? `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>
+          </svg>
+        ` : `
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/>
+          </svg>
+        `}
+      </div>
+    `;
+
+    return cardEl;
+  },
+
+  getToolInfo(type) {
+    const toolMap = {
+      'todo': {
+        name: '创建待办',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>`
+      },
+      'nav': {
+        name: '添加导航',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/>
+        </svg>`
+      },
+      'bookmark': {
+        name: '添加收藏',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="m19 21-7-4-7 4V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16z"/>
+        </svg>`
+      },
+      'prompt': {
+        name: '添加提示词',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/>
+          <path d="M9 18h6"/><path d="M10 22h4"/>
+        </svg>`
+      },
+      'cmd': {
+        name: '添加指令',
+        icon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="4 17 10 11 4 5"/><line x1="12" x2="20" y1="19" y2="19"/>
+        </svg>`
+      }
+    };
+
+    return toolMap[type] || { name: '执行操作', icon: '<span>🔧</span>' };
+  },
+
+  formatToolDetails(type, data) {
+    switch (type) {
+      case 'todo':
+        return `<span class="tool-detail-text">${data.text}</span>`;
+      case 'nav':
+        return `<span class="tool-detail-text">${data.title}</span>`;
+      case 'bookmark':
+        return `<span class="tool-detail-text">${data.title}</span>`;
+      case 'prompt':
+        return `<span class="tool-detail-text">${data.title}</span>`;
+      case 'cmd':
+        return `<span class="tool-detail-text">${data.title}</span>`;
+      default:
+        return '';
+    }
   },
 
   formatContent(content) {

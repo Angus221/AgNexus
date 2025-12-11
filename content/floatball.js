@@ -294,9 +294,57 @@
     }
   }
 
-  // 切换侧边栏
+  // 打开侧边栏（带错误处理和重试机制）
   function openSidePanel() {
-    chrome.runtime.sendMessage({ type: 'TOGGLE_SIDE_PANEL' });
+    let retryCount = 0;
+    const maxRetries = 3;
+
+    function attemptOpen() {
+      console.log('AG Nexus: 尝试打开侧边栏', retryCount + 1);
+
+      // 优先使用直接打开的方式，更可靠
+      chrome.runtime.sendMessage({ type: 'OPEN_SIDE_PANEL' }, (response) => {
+        // 检查是否有错误
+        if (chrome.runtime.lastError) {
+          console.error('AG Nexus: 打开侧边栏失败', chrome.runtime.lastError);
+
+          // 重试
+          if (retryCount < maxRetries) {
+            retryCount++;
+            setTimeout(attemptOpen, 300);
+          } else {
+            console.error('AG Nexus: 打开侧边栏失败，已达到最大重试次数');
+            // 显示用户友好的提示
+            showErrorTooltip('无法打开侧边栏，请点击扩展图标');
+          }
+        } else {
+          console.log('AG Nexus: 侧边栏已打开');
+        }
+      });
+    }
+
+    attemptOpen();
+  }
+
+  // 显示错误提示
+  function showErrorTooltip(message) {
+    if (!floatBall) return;
+
+    const tooltip = floatBall.querySelector('.float-ball-tooltip');
+    if (tooltip) {
+      tooltip.innerHTML = `<div style="color: #FCA5A5;">${message}</div>`;
+      tooltip.style.display = 'block';
+      tooltip.style.opacity = '1';
+      tooltip.style.transform = 'translateX(0)';
+
+      // 3秒后隐藏
+      setTimeout(() => {
+        tooltip.style.opacity = '0';
+        setTimeout(() => {
+          tooltip.style.display = 'none';
+        }, 200);
+      }, 3000);
+    }
   }
 
   // 更新tooltip内容
@@ -499,24 +547,62 @@
 
   // 初始化 - 检查是否启用悬浮球
   function init() {
-    chrome.storage.local.get(['settings'], (result) => {
-      const settings = result.settings || {};
-      // 默认为true，只有明确设置为false才不显示
-      const floatBallEnabled = settings.floatBallEnabled !== false;
-      console.log('AG Nexus 悬浮球初始化:', settings, '启用状态:', floatBallEnabled);
-      if (floatBallEnabled) {
-        console.log('创建悬浮球');
-        createFloatBall();
-      } else {
-        console.log('悬浮球未启用');
+    // 确保 body 存在
+    function tryInit(retries = 0) {
+      if (!document.body) {
+        if (retries < 10) {
+          console.log('AG Nexus: body 未就绪，等待重试...', retries + 1);
+          setTimeout(() => tryInit(retries + 1), 100);
+          return;
+        } else {
+          console.error('AG Nexus: body 初始化超时');
+          return;
+        }
       }
+
+      chrome.storage.local.get(['settings'], (result) => {
+        const settings = result.settings || {};
+        // 默认为true，只有明确设置为false才不显示
+        const floatBallEnabled = settings.floatBallEnabled !== false;
+        console.log('AG Nexus 悬浮球初始化:', settings, '启用状态:', floatBallEnabled);
+        if (floatBallEnabled) {
+          console.log('创建悬浮球');
+          createFloatBall();
+        } else {
+          console.log('悬浮球未启用');
+        }
+      });
+    }
+
+    tryInit();
+  }
+
+  // 监听 DOM 变化，防止悬浮球被页面删除
+  function observeDOM() {
+    const observer = new MutationObserver(() => {
+      // 如果悬浮球被移除，重新创建
+      if (floatBall && !document.body.contains(floatBall)) {
+        console.log('AG Nexus: 检测到悬浮球被移除，重新创建');
+        floatBall = null;
+        init();
+      }
+    });
+
+    observer.observe(document.body, {
+      childList: true,
+      subtree: false
     });
   }
 
   // 页面加载完成后初始化
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
+    document.addEventListener('DOMContentLoaded', () => {
+      init();
+      // 延迟启动 DOM 监听，避免初始化时的干扰
+      setTimeout(observeDOM, 2000);
+    });
   } else {
     init();
+    setTimeout(observeDOM, 2000);
   }
 })();
