@@ -48,6 +48,13 @@ const Prompt = {
       this.searchKeyword = e.target.value.trim().toLowerCase();
       this.render();
     });
+
+    // 监听标签页切换事件，切换到提示词页面时刷新数据
+    window.addEventListener('tabChange', (e) => {
+      if (e.detail.tab === 'prompt') {
+        this.render();
+      }
+    });
   },
 
   async render() {

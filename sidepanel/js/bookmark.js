@@ -47,6 +47,13 @@ const Bookmark = {
       this.currentPage = 1;
       this.render();
     });
+
+    // 监听标签页切换事件，切换到导航页面时刷新数据
+    window.addEventListener('tabChange', (e) => {
+      if (e.detail.tab === 'navigation') {
+        this.render();
+      }
+    });
   },
 
   async render() {

@@ -42,6 +42,13 @@ const Navigation = {
     this.modal?.addEventListener('click', (e) => {
       if (e.target === this.modal) this.hideModal();
     });
+
+    // 监听标签页切换事件，切换到导航页面时刷新数据
+    window.addEventListener('tabChange', (e) => {
+      if (e.detail.tab === 'navigation') {
+        this.render();
+      }
+    });
   },
 
   setViewMode(mode) {

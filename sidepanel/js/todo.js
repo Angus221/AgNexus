@@ -60,6 +60,13 @@ const Todo = {
         container.style.display = 'none';
       }
     });
+
+    // 监听标签页切换事件，切换到待办页面时刷新数据
+    window.addEventListener('tabChange', (e) => {
+      if (e.detail.tab === 'todo') {
+        this.render();
+      }
+    });
   },
 
   async render() {

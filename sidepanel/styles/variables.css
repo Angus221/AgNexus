@@ -97,6 +97,7 @@
 }
 
 /* ========== 深色模式 ========== */
+/* 只有明确设置 data-theme="dark" 时才应用深色主题 */
 [data-theme="dark"] {
   --brand-primary-light: rgba(37, 99, 235, 0.15);
   --brand-primary-border: rgba(59, 130, 246, 0.3);
@@ -107,6 +108,7 @@
   --bg-hover: #374151;
   --bg-active: #4B5563;
   --bg-tab-active: rgba(37, 99, 235, 0.2);
+  --bg-tab-inactive: #374151;
 
   --text-strong: #F9FAFB;
   --text-primary: #F3F4F6;
@@ -123,35 +125,4 @@
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-}
-
-/* 系统主题自动跟随 */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --brand-primary-light: rgba(37, 99, 235, 0.15);
-    --brand-primary-border: rgba(59, 130, 246, 0.3);
-
-    --bg-page: #111827;
-    --bg-surface: #1F2937;
-    --bg-elevated: #374151;
-    --bg-hover: #374151;
-    --bg-active: #4B5563;
-    --bg-tab-active: rgba(37, 99, 235, 0.2);
-
-    --text-strong: #F9FAFB;
-    --text-primary: #F3F4F6;
-    --text-secondary: #D1D5DB;
-    --text-tertiary: #9CA3AF;
-    --text-muted: #6B7280;
-    --text-placeholder: #6B7280;
-
-    --border-light: #374151;
-    --border-default: #4B5563;
-    --border-medium: #6B7280;
-
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.2);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3);
-    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
-    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.5);
-  }
 }
