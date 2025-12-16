@@ -2,7 +2,7 @@
  * AG.NEXUS - 聊天消息组件
  */
 
-import { Card, CardBody, Avatar } from '@heroui/react'
+import { Card, CardBody, Avatar, Image } from '@heroui/react'
 import { User } from 'lucide-react'
 import { MarkdownRenderer } from './MarkdownRenderer'
 import type { ChatMessage as ChatMessageType } from '../../services/types'
@@ -31,7 +31,19 @@ export function ChatMessage({ message }: ChatMessageProps) {
         shadow={isUser ? 'sm' : 'none'}
         radius="lg"
       >
-        <CardBody className="py-2.5 px-3.5">
+        <CardBody className="py-2.5 px-3.5 overflow-hidden">
+          {message.images && message.images.length > 0 && (
+            <div className="flex gap-2 mb-2 flex-wrap">
+              {message.images.map((img, i) => (
+                <Image
+                  key={i}
+                  src={img}
+                  alt="attached"
+                  className="max-w-[200px] max-h-[200px] rounded-md object-cover border border-white/20"
+                />
+              ))}
+            </div>
+          )}
           {isUser ? (
             <p className="text-sm whitespace-pre-wrap">{message.content}</p>
           ) : (

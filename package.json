@@ -1,8 +1,28 @@
 {
   "name": "ag.nexus",
   "private": true,
-  "version": "1.5.0",
+  "version": "1.6.0",
   "description": "智能生产力中枢 - 导航、指令、提示词、待办、AI助理",
+  "author": "Angus",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Angus221/AgNexus.git"
+  },
+  "homepage": "https://github.com/Angus221/AgNexus#readme",
+  "bugs": {
+    "url": "https://github.com/Angus221/AgNexus/issues"
+  },
+  "keywords": [
+    "chrome-extension",
+    "react",
+    "vite",
+    "productivity",
+    "ai",
+    "chatgpt",
+    "navigation",
+    "todo"
+  ],
   "type": "module",
   "scripts": {
     "dev": "vite",

@@ -142,19 +142,25 @@ export const addBookmarkTool = new DynamicStructuredTool({
 // 工具 3: 添加待办
 export const addTodoTool = new DynamicStructuredTool({
   name: 'add_todo',
-  description: '创建待办事项，支持时间、优先级、提醒设置。',
+  description: '创建待办事项，支持一次性创建多个任务。如果用户提供了多个任务，请在 todos 数组中传递它们。',
   schema: z.object({
-    text: z.string().describe('任务内容'),
-    dateType: z.enum(['today', 'tomorrow', 'thisweek', 'other']).describe('日期类型：today-今天，tomorrow-明天，thisweek-本周，other-其他'),
-    startDate: z.string().describe('开始日期，格式 YYYY-MM-DD'),
-    reminderEnabled: z.boolean().describe('是否开启提醒'),
-    reminderTime: z.string().describe('提醒时间，格式 HH:mm，例如 18:00'),
-    priority: z.enum(['low', 'medium', 'high']).describe('优先级：low-低，medium-中，high-高'),
+    todos: z.array(z.object({
+      text: z.string().describe('任务内容'),
+      dateType: z.enum(['today', 'tomorrow', 'thisweek', 'other']).describe('日期类型：today-今天，tomorrow-明天，thisweek-本周，other-其他'),
+      startDate: z.string().describe('开始日期，格式 YYYY-MM-DD'),
+      reminderEnabled: z.boolean().describe('是否开启提醒'),
+      reminderTime: z.string().describe('提醒时间，格式 HH:mm，例如 18:00'),
+      priority: z.enum(['low', 'medium', 'high']).describe('优先级：low-低，medium-中，high-高'),
+    })).describe('待办事项列表'),
   }),
-  func: async (data: TodoInput) => {
+  func: async ({ todos }: { todos: TodoInput[] }) => {
     try {
-      await Storage.addTodo(data)
-      return `✅ 已创建待办：${data.text}`
+      const results = []
+      for (const todo of todos) {
+        await Storage.addTodo(todo)
+        results.push(todo.text)
+      }
+      return `✅ 已创建 ${results.length} 个待办：\n${results.map(t => `- ${t}`).join('\n')}`
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       return `❌ 创建待办失败：${message}`

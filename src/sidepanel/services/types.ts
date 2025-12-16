@@ -102,8 +102,10 @@ export interface Settings {
   apiUrl: string
   apiKey: string
   model: string
+  visionModel: string
   theme: 'auto' | 'light' | 'dark'
   floatBallEnabled: boolean
+  morningReportPrompt?: string
 }
 
 /**
@@ -112,6 +114,7 @@ export interface Settings {
 export interface ChatMessage {
   role: 'user' | 'assistant'
   content: string
+  images?: string[]
   timestamp: string
 }
 
@@ -144,6 +147,17 @@ export interface UserProfile {
 }
 
 /**
+ * RSS 源
+ */
+export interface RssSource {
+  id: string
+  title: string
+  url: string
+  description: string
+  enabled: boolean
+}
+
+/**
  * 存储数据结构
  */
 export interface StorageData {
@@ -158,6 +172,8 @@ export interface StorageData {
   vaultPin: string | null
   vaultItems: VaultItem[]
   userProfile: UserProfile | null
+  rssSources: RssSource[]
+  lastMorningReportDate: string | null
   memoryBank: string
   messageCount: number
   hasAskedUserInfo: boolean

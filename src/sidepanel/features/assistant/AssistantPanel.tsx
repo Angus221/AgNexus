@@ -3,8 +3,8 @@
  */
 
 import { useState, useEffect, useRef } from 'react'
-import { ScrollShadow, Button, Spinner, Link, Avatar } from '@heroui/react'
-import { Trash2, Settings } from 'lucide-react'
+import { ScrollShadow, Button, Spinner, Avatar, Card, CardBody } from '@heroui/react'
+import { Trash2, Settings, RefreshCw } from 'lucide-react'
 import { ChatMessage } from '../../components/chat/ChatMessage'
 import { ChatInput } from '../../components/chat/ChatInput'
 import { AGNexusAgent } from '../../services/agent/agent'
@@ -44,6 +44,9 @@ export function AssistantPanel() {
         // 加载历史消息
         const history = await Storage.getChatHistory()
         setMessages(history)
+
+        // 检查早报
+        checkMorningReport(agentInstance)
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error)
         toast.error(`初始化失败: ${message}`)
@@ -55,6 +58,59 @@ export function AssistantPanel() {
     init()
   }, [])
 
+  const checkMorningReport = async (agentInstance: AGNexusAgent) => {
+    try {
+      const today = new Date().toISOString().slice(0, 10)
+      const lastDate = await Storage.getMorningReportDate()
+
+      if (lastDate !== today) {
+        const toastId = toast.loading('正在为您生成今日早报...')
+        const report = await agentInstance.generateMorningReport()
+        toast.dismiss(toastId)
+        
+        if (report) {
+          const reportMsg: ChatMessageType = {
+            role: 'assistant',
+            content: `📅 **今日早报**\n\n${report}`,
+            timestamp: new Date().toISOString(),
+          }
+          setMessages((prev) => [...prev, reportMsg])
+          await Storage.setMorningReportDate(today)
+        }
+      }
+    } catch (e) {
+      console.error('早报生成失败:', e)
+    }
+  }
+
+  const handleRegenerateMorningReport = async () => {
+    if (!agent) return
+    
+    // 重置早报日期
+    await Storage.setMorningReportDate('')
+    
+    // 手动触发生成
+    const toastId = toast.loading('正在为您重新生成早报...')
+    try {
+      const report = await agent.generateMorningReport()
+      toast.dismiss(toastId)
+      
+      if (report) {
+        const reportMsg: ChatMessageType = {
+          role: 'assistant',
+          content: `📅 **今日早报 (重新生成)**\n\n${report}`,
+          timestamp: new Date().toISOString(),
+        }
+        setMessages((prev) => [...prev, reportMsg])
+        // 更新日期为今天
+        await Storage.setMorningReportDate(new Date().toISOString().slice(0, 10))
+      }
+    } catch (e) {
+      toast.dismiss(toastId)
+      toast.error('生成失败')
+    }
+  }
+
   // 自动滚动到底部
   useEffect(() => {
     if (scrollRef.current) {
@@ -63,7 +119,7 @@ export function AssistantPanel() {
   }, [messages])
 
   // 发送消息
-  const handleSend = async (input: string) => {
+  const handleSend = async (input: string, images?: string[]) => {
     if (!agent) {
       toast.error('Agent 未初始化')
       return
@@ -73,6 +129,7 @@ export function AssistantPanel() {
     const userMessage: ChatMessageType = {
       role: 'user',
       content: input,
+      images: images,
       timestamp: new Date().toISOString(),
     }
     setMessages((prev) => [...prev, userMessage])
@@ -80,7 +137,7 @@ export function AssistantPanel() {
 
     try {
       // 调用 Agent
-      const response = await agent.chat(input)
+      const response = await agent.chat(input, images)
 
       if (response.success && response.content) {
         // 添加 AI 回复到界面
@@ -133,17 +190,6 @@ export function AssistantPanel() {
     )
   }
 
-  // API Key 未配置的提示消息
-  const apiKeyMissingMessage: ChatMessageType = {
-    role: 'assistant',
-    content: `你好！我是 AG Nexus 助理 🤖
-
-在开始使用之前，需要先配置 API Key。
-
-请点击下方链接前往设置页面完成配置：`,
-    timestamp: new Date().toISOString(),
-  }
-
   return (
     <div className="flex flex-col h-full">
       {/* 顶部工具栏 */}
@@ -156,66 +202,88 @@ export function AssistantPanel() {
           />
           <span className="text-sm font-medium">AI 助理</span>
         </div>
-        <Button
-          size="sm"
-          variant="light"
-          color="danger"
-          isIconOnly
-          onPress={handleClear}
-          isDisabled={messages.length === 0 || !hasApiKey}
-          title="清空记录"
-        >
-          <Trash2 size={16} />
-        </Button>
+        <div className="flex gap-1">
+          <Button
+            size="sm"
+            variant="light"
+            isIconOnly
+            onPress={handleRegenerateMorningReport}
+            isDisabled={!agent || !hasApiKey}
+            title="重新生成今日早报"
+          >
+            <RefreshCw size={16} />
+          </Button>
+          <Button
+            size="sm"
+            variant="light"
+            color="danger"
+            isIconOnly
+            onPress={handleClear}
+            isDisabled={messages.length === 0 || !hasApiKey}
+            title="清空记录"
+          >
+            <Trash2 size={16} />
+          </Button>
+        </div>
       </div>
 
       {/* 聊天区域 */}
-      <ScrollShadow
-        ref={scrollRef}
-        className="flex-1 px-4 pt-4 pb-8 overflow-y-auto"
-        hideScrollBar
-      >
-        {!hasApiKey ? (
-          // API Key 未配置时显示机器人提示
-          <div className="space-y-4">
-            <ChatMessage message={apiKeyMissingMessage} />
-            <div className="flex justify-start pl-10">
-              <Link
-                className="flex items-center gap-2 text-primary cursor-pointer hover:underline"
+      {!hasApiKey ? (
+        <div className="flex-1 flex items-center justify-center p-6">
+          <Card className="w-full max-w-sm">
+            <CardBody className="text-center py-8">
+              <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center text-primary mx-auto mb-4">
+                <Settings size={32} />
+              </div>
+              <h2 className="text-xl font-bold mb-2">欢迎使用 AI 助理</h2>
+              <p className="text-default-500 text-sm mb-6">
+                请先配置 API Key 以启用智能对话功能。<br />
+                支持阿里云百炼 (Qwen) 或 OpenAI 格式接口。
+              </p>
+              <Button
+                color="primary"
                 onPress={() => setActiveTab('settings')}
+                className="w-full"
               >
-                <Settings size={16} />
-                <span>前往设置页面配置 API Key</span>
-              </Link>
-            </div>
-          </div>
-        ) : messages.length === 0 ? (
-          <div className="flex items-center justify-center h-full">
-            <div className="text-center text-default-400">
-              <p className="text-lg mb-2">👋 你好！我是 AG Nexus 助理</p>
-              <p className="text-sm">有什么可以帮助你的吗？</p>
-            </div>
-          </div>
-        ) : (
-          messages.map((msg, index) => (
-            <ChatMessage key={`${msg.timestamp}-${index}`} message={msg} />
-          ))
-        )}
+                前往设置
+              </Button>
+            </CardBody>
+          </Card>
+        </div>
+      ) : (
+        <>
+          <ScrollShadow
+            ref={scrollRef}
+            className="flex-1 px-4 pt-4 pb-8 overflow-y-auto"
+            hideScrollBar
+          >
+            {messages.length === 0 ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center text-default-400">
+                  <p className="text-lg mb-2">👋 你好！我是 AG Nexus 助理</p>
+                  <p className="text-sm">有什么可以帮助你的吗？</p>
+                </div>
+              </div>
+            ) : (
+              messages.map((msg, index) => (
+                <ChatMessage key={index} message={msg} />
+              ))
+            )}
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-default-100 rounded-lg p-4">
+                  <Spinner size="sm" />
+                </div>
+              </div>
+            )}
+          </ScrollShadow>
 
-        {isLoading && (
-          <div className="flex items-center gap-2 text-default-400 mb-4">
-            <Spinner size="sm" />
-            <span className="text-sm">正在思考...</span>
+          {/* 输入框 */}
+          <div className="p-4 border-t border-divider/50 bg-background/50 backdrop-blur-md">
+            <ChatInput onSend={handleSend} isLoading={isLoading} />
           </div>
-        )}
-      </ScrollShadow>
-
-      {/* 输入区域 */}
-      <ChatInput
-        onSend={handleSend}
-        disabled={isLoading || !agent || !hasApiKey}
-        placeholder={hasApiKey ? "输入消息... (Enter 发送)" : "请先配置 API Key"}
-      />
+        </>
+      )}
     </div>
   )
 }

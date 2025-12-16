@@ -21,6 +21,7 @@ import type {
   VaultItem,
   VaultItemInput,
   UserProfile,
+  RssSource,
   StorageData,
   StorageKey,
   ExportOptions,
@@ -45,6 +46,7 @@ class StorageService {
       apiUrl: 'https://dashscope.aliyuncs.com/compatible-mode/v1',
       apiKey: '',
       model: 'qwen-turbo',
+      visionModel: 'qwen3-vl-flash',
       theme: 'auto',
       floatBallEnabled: true,
     },
@@ -52,6 +54,8 @@ class StorageService {
     vaultPin: null,
     vaultItems: [],
     userProfile: null,
+    rssSources: [],
+    lastMorningReportDate: null,
     memoryBank: '',
     messageCount: 0,
     hasAskedUserInfo: false,
@@ -119,6 +123,37 @@ class StorageService {
         resolve()
       }
     })
+  }
+
+  async getRssSources(): Promise<RssSource[]> {
+    return this.get('rssSources')
+  }
+
+  async setRssSources(sources: RssSource[]): Promise<void> {
+    return this.set('rssSources', sources)
+  }
+
+  async addRssSource(source: Omit<RssSource, 'id'>): Promise<RssSource> {
+    const sources = await this.getRssSources()
+    const newSource: RssSource = {
+      ...source,
+      id: crypto.randomUUID(),
+    }
+    await this.setRssSources([newSource, ...sources])
+    return newSource
+  }
+
+  async removeRssSource(id: string): Promise<void> {
+    const sources = await this.getRssSources()
+    await this.setRssSources(sources.filter((s) => s.id !== id))
+  }
+
+  async getMorningReportDate(): Promise<string | null> {
+    return this.get('lastMorningReportDate')
+  }
+
+  async setMorningReportDate(date: string): Promise<void> {
+    return this.set('lastMorningReportDate', date)
   }
 
   // ========== 导航操作 ==========

@@ -1,50 +1,113 @@
-# Vite & HeroUI Template
+<div align="center">
 
-This is a template for creating applications using Vite and HeroUI (v2).
+# 🚀 AG Nexus
 
-[Try it on CodeSandbox](https://githubbox.com/heroui-inc/vite-template)
+**智能生产力中枢 (Smart Productivity Hub)**
 
-## Technologies Used
+集成导航、指令、提示词、待办、密码保险库和 AI 助理的 Edge/Chrome 浏览器侧边栏扩展
 
-- [Vite](https://vitejs.dev/guide/)
-- [HeroUI](https://heroui.com)
-- [Tailwind CSS](https://tailwindcss.com)
-- [Tailwind Variants](https://tailwind-variants.org)
-- [TypeScript](https://www.typescriptlang.org)
-- [Framer Motion](https://www.framer.com/motion)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Version](https://img.shields.io/badge/version-1.5.0-green.svg)](package.json)
+[![Tech Stack](https://img.shields.io/badge/stack-React%20%7C%20Vite%20%7C%20Tailwind-blue)](package.json)
 
-## How to Use
+[English Documentation](docs/README_EN.md) | [设计文档](docs/DESIGN.md)
 
-To clone the project, run the following command:
+</div>
 
-```bash
-git clone https://github.com/heroui-inc/vite-template.git
+---
+
+## 📖 项目简介
+
+**AG Nexus** 是一款功能强大的浏览器侧边栏扩展，旨在成为你的个人智能生产力中枢。它采用现代化的技术栈构建，将日常工作中所需的多种工具整合在一个优雅的侧边栏界面中，帮助你保持专注，提升效率。
+
+## ✨ 核心功能
+
+| 功能模块 | 描述 |
+| --- | --- |
+| **🧭 快捷导航** | 一键保存常用网站，自动获取图标，支持 AI 语音添加，告别繁琐的书签栏。 |
+| **🤖 AI 智能助理** | 内置智能对话助手，支持 OpenAI 兼容接口（如阿里百炼），具备记忆功能，可协助完成导航、待办等操作。 |
+| **💻 指令中心** | 存储常用代码片段和命令行指令，支持一键复制和语法高亮，开发者的好帮手。 |
+| **💡 提示词库** | 管理和分类 AI 提示词（Prompts），标签化检索，快速复用。 |
+| **✅ 智能待办** | 任务管理与提醒系统，支持优先级设置，并通过悬浮球和桌面通知实时提醒。 |
+| **🔐 密码保险库** | 安全存储敏感信息（如 API Key、账号密码），采用 PIN 码保护和本地加密，数据不上云。 |
+| **🔮 悬浮球** | 页面角落的智能悬浮球，实时展示待办倒计时，提供快捷入口。 |
+
+## 🛠️ 技术栈
+
+本项目采用最新的前端技术栈构建，确保高性能和良好的开发体验：
+
+-   **Core**: [React 18](https://react.dev/), [TypeScript](https://www.typescriptlang.org/)
+-   **Build**: [Vite 6](https://vitejs.dev/) (Chrome Extension Mode)
+-   **Styling**: [Tailwind CSS 4](https://tailwindcss.com/), [HeroUI 2](https://heroui.com/), [Framer Motion](https://www.framer.com/motion)
+-   **AI & Logic**: [LangChain](https://js.langchain.com/), [Zod](https://zod.dev/)
+-   **Extension**: Manifest V3, SidePanel API, Background Service Worker
+
+## 📂 项目结构
+
+```text
+ag.nexus/
+├── src/
+│   ├── sidepanel/          # 侧边栏主应用
+│   │   ├── components/     # UI 组件
+│   │   ├── features/       # 功能模块 (Assistant, Todo, Vault, etc.)
+│   │   ├── contexts/       # React Context (Theme, Tab)
+│   │   ├── services/       # 业务逻辑服务 (Agent, Storage)
+│   │   ├── hooks/          # Custom Hooks
+│   │   └── styles/         # 全局样式
+│   ├── content/            # Content Scripts (悬浮球)
+│   ├── background.js       # 后台服务 Worker
+│   └── types/              # TypeScript 类型定义
+├── docs/                   # 项目文档
+├── public/                 # 静态资源
+└── manifest.json           # 扩展配置文件
 ```
 
-### Install dependencies
+## 🚀 快速开始
 
-You can use one of them `npm`, `yarn`, `pnpm`, `bun`, Example using `npm`:
+### 环境要求
 
-```bash
-npm install
-```
+-   Node.js >= 20
+-   pnpm (推荐) 或 npm
 
-### Run the development server
+### 安装步骤
 
-```bash
-npm run dev
-```
+1.  **克隆项目**
+    ```bash
+    git clone https://github.com/Angus221/AgNexus.git
+    cd ag.nexus
+    ```
 
-### Setup pnpm (optional)
+2.  **安装依赖**
+    ```bash
+    npm install
+    # 或者
+    pnpm install
+    ```
 
-If you are using `pnpm`, you need to add the following code to your `.npmrc` file:
+3.  **启动开发服务器**
+    ```bash
+    npm run dev
+    ```
+    此命令会启动 Vite 并在监听模式下构建项目。
 
-```bash
-public-hoist-pattern[]=*@heroui/*
-```
+### 在浏览器中加载
 
-After modifying the `.npmrc` file, you need to run `pnpm install` again to ensure that the dependencies are installed correctly.
+1.  打开 Chrome 或 Edge 浏览器，进入 **扩展程序管理** 页面 (`chrome://extensions` 或 `edge://extensions`)。
+2.  开启右上角的 **"开发者模式"**。
+3.  点击 **"加载已解压的扩展程序"**。
+4.  选择项目根目录下的 `dist` 文件夹（如果未生成 `dist`，请先运行 `npm run build`，或者在 `npm run dev` 运行后选择生成的目录）。
+    *   *注意：开发模式下 Vite 可能直接从源文件服务，但通常扩展开发需要加载构建后的产物或特定的 manifest。请确保 `manifest.json` 指向正确的文件。本项目配置为 Vite 直接构建到 dist 目录供加载。*
 
-## License
+## 🤝 贡献指南
 
-Licensed under the [MIT license](https://github.com/heroui-inc/vite-template/blob/main/LICENSE).
+欢迎提交 Issue 和 Pull Request！详情请查看 [CONTRIBUTING.md](CONTRIBUTING.md)（待创建）。
+
+## 📄 许可证
+
+本项目采用 [MIT 许可证](LICENSE)。
+
+---
+
+<div align="center">
+Made with ❤️ by Angus
+</div>
