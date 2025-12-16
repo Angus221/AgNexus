@@ -1,0 +1,57 @@
+/**
+ * AG.NEXUS - 全局样式
+ */
+
+/* Tailwind CSS v4 基础引入 */
+@import "tailwindcss";
+
+/* 引入 tailwind.config.js 配置（HeroUI 需要） */
+@config "../../../tailwind.config.js";
+
+/* 引入 HeroUI 组件内容扫描路径 */
+@source "../../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(107, 114, 128, 0.3);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(107, 114, 128, 0.5);
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* 动画 */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s ease-out;
+}
+
+/* 全局样式 */
+body {
+  overflow: hidden;
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
